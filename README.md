@@ -56,8 +56,8 @@ Calx/
 ### 2. Installation
 Clone the repository and enter the directory:
 ```bash
-git clone https://github.com/SachinJatavat/Calx.git
-cd Calx
+git clone https://github.com/sachinjatavat/CalcX-Calculator.git
+cd CalcX-Calculator
 ```
 
 ### 3. Setup Environment
