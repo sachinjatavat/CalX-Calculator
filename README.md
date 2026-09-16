@@ -2,6 +2,13 @@
 
 > **Created by Sachin Jatavat**
 
+[![Netlify Live Demo](https://img.shields.io/badge/Netlify-Live%20Demo-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)](https://calx-calculator.netlify.app/)
+[![GitHub Pages Live Demo](https://img.shields.io/badge/GitHub%20Pages-Live%20Demo-222222?style=for-the-badge&logo=github&logoColor=white)](https://sachinjatavat.github.io/CalX-Calculator/)
+
+### 🌐 Live Web Applications:
+- ⚡ **Netlify App**: [https://calx-calculator.netlify.app/](https://calx-calculator.netlify.app/)
+- 🚀 **GitHub Pages App**: [https://sachinjatavat.github.io/CalX-Calculator/](https://sachinjatavat.github.io/CalX-Calculator/)
+
 Calx is a state-of-the-art, responsive, light purple-themed universal calculation suite. Engineered for speed, mathematical clarity, and touch-friendly mobile usability, Calx combines 28+ calculation engines—ranging from scientific math and 24/7 live forex currency conversions to financial loan tools, unit converters, and base number systems—in a single unified inline workspace.
 
 ---
