@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Calx — Universal Modern Calculator & 24/7 Currency Converter</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#7c3aed',
+            'primary-hover': '#6d28d9',
+            'primary-light': '#f3e8ff',
+            'primary-subtle': '#ede9fe',
+            'bg-main': '#f8f7fd',
+            'card-border': '#eef0f8',
+            'text-main': '#0f172a',
+            'text-muted': '#64748b'
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Material Symbols & Custom CSS -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-[#f8f7fd] text-slate-900 antialiased flex flex-col md:flex-row min-h-screen">
+
+  <!-- MOBILE TOP HEADER (Visible only on mobile devices <768px) -->
+  <header class="md:hidden bg-white border-b border-[#eef0f8] px-4 py-3 flex items-center justify-between sticky top-0 z-30 shadow-xs">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center font-extrabold text-base shadow-xs">
+        C
+      </div>
+      <div>
+        <h1 class="font-bold text-base tracking-tight text-slate-900 leading-tight">Calx</h1>
+        <p class="text-[9px] font-bold text-purple-600 tracking-wide">By Sachin Jatavat</p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button onclick="openSearchModal()" class="p-2 rounded-xl bg-slate-100 text-slate-600 active:scale-95 transition-all" title="Search">
+        <span class="material-symbols-outlined text-[20px]">search</span>
+      </button>
+      <button onclick="toggleMobileSidebar()" class="p-2 rounded-xl bg-purple-50 text-purple-700 active:scale-95 transition-all" title="Menu">
+        <span class="material-symbols-outlined text-[22px]">menu</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MOBILE DRAWER BACKDROP OVERLAY -->
+  <div id="mobile-drawer-overlay" onclick="closeMobileSidebar()"></div>
+
+  <!-- SIDEBAR NAVIGATION CONTAINER -->
+  <aside id="sidebar-container" class="bg-white border-r border-[#eef0f8] p-5 flex flex-col justify-between shrink-0 shadow-sm md:w-64">
+    <div class="space-y-6">
+      <!-- Logo & Brand Header (Desktop) -->
+      <div class="hidden md:flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-purple-600 text-white flex items-center justify-center font-extrabold text-lg shadow-md shadow-purple-200">
+          C
+        </div>
+        <div>
+          <h1 class="font-bold text-lg tracking-tight text-slate-900 leading-tight">Calx</h1>
+          <p class="text-[10px] font-bold text-purple-600 tracking-wide">By Sachin Jatavat</p>
+        </div>
+      </div>
+
+      <!-- Quick Search Trigger -->
+      <div class="relative">
+        <input type="text" onclick="openSearchModal()" readonly placeholder="Quick search..." class="w-full pl-8 pr-10 py-2 rounded-xl bg-slate-100/80 hover:bg-slate-100 text-xs font-semibold text-slate-500 cursor-pointer transition-all">
+        <span class="material-symbols-outlined absolute left-2.5 top-2 text-slate-400 text-[16px]">search</span>
+        <span class="absolute right-2.5 top-2 text-[10px] font-bold text-slate-400 bg-white px-1.2 py-0.2 rounded border border-slate-200">⌘K</span>
+      </div>
+
+      <!-- Navigation Menu Pills -->
+      <nav id="sidebar-nav" class="space-y-1">
+        <button onclick="switchView('dashboard'); closeMobileSidebar();" id="nav-dashboard" class="nav-pill nav-pill-active w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all">
+          <span class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-[18px]">grid_view</span>
+            <span>All Tools / Dashboard</span>
+          </span>
+        </button>
+
+        <button onclick="switchView('calculator'); closeMobileSidebar();" id="nav-calculator" class="nav-pill w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-purple-50 hover:text-purple-700 transition-all">
+          <span class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-[18px]">calculate</span>
+            <span>Calculator</span>
+          </span>
+        </button>
+
+        <button onclick="switchView('unit-converters'); closeMobileSidebar();" id="nav-unit-converters" class="nav-pill w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-purple-50 hover:text-purple-700 transition-all">
+          <span class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-[18px]">sync_alt</span>
+            <span>Unit &amp; Data Converters</span>
+          </span>
+        </button>
+
+        <button onclick="switchView('currency-converter'); closeMobileSidebar();" id="nav-currency-converter" class="nav-pill w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-purple-50 hover:text-purple-700 transition-all">
+          <span class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-[18px]">currency_exchange</span>
+            <span>Currency Converter</span>
+          </span>
+        </button>
+
+        <button onclick="switchView('financial-tools'); closeMobileSidebar();" id="nav-financial-tools" class="nav-pill w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-purple-50 hover:text-purple-700 transition-all">
+          <span class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-[18px]">payments</span>
+            <span>Financial Tools</span>
+          </span>
+        </button>
+
+        <button onclick="switchView('date-time-health'); closeMobileSidebar();" id="nav-date-time-health" class="nav-pill w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-purple-50 hover:text-purple-700 transition-all">
+          <span class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-[18px]">health_and_safety</span>
+            <span>Date, Time &amp; Health</span>
+          </span>
+        </button>
+
+        <button onclick="switchView('math-engineering'); closeMobileSidebar();" id="nav-math-engineering" class="nav-pill w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-purple-50 hover:text-purple-700 transition-all">
+          <span class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-[18px]">square_foot</span>
+            <span>Math &amp; Engineering</span>
+          </span>
+        </button>
+
+        <button onclick="switchView('calculation-history'); closeMobileSidebar();" id="nav-calculation-history" class="nav-pill w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-purple-50 hover:text-purple-700 transition-all">
+          <span class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-[18px]">history</span>
+            <span>Calculation History</span>
+          </span>
+          <span id="sidebar-history-count" class="px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 font-bold text-[10px]">28</span>
+        </button>
+
+        <button onclick="switchView('favorites'); closeMobileSidebar();" id="nav-favorites" class="nav-pill w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 hover:bg-purple-50 hover:text-purple-700 transition-all">
+          <span class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-[18px]">star</span>
+            <span>Favorites</span>
+          </span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- Sidebar Bottom Status & Settings -->
+    <div class="pt-6 border-t border-slate-100 space-y-2 text-xs font-semibold text-slate-500">
+      <button onclick="openShortcutsModal(); closeMobileSidebar();" class="w-full flex items-center gap-2 hover:text-purple-600 transition-colors">
+        <span class="material-symbols-outlined text-[16px]">settings</span>
+        <span>Settings</span>
+      </button>
+      <button onclick="openShortcutsModal(); closeMobileSidebar();" class="w-full flex items-center justify-between hover:text-purple-600 transition-colors">
+        <span class="flex items-center gap-2">
+          <span class="material-symbols-outlined text-[16px]">keyboard</span>
+          <span>Shortcuts</span>
+        </span>
+        <span>›</span>
+      </button>
+
+      <div class="pt-2 flex items-center gap-2 text-[10px] text-emerald-600 font-bold">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>All engines operational</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN WORKSPACE CONTENT -->
+  <main class="flex-1 p-3 sm:p-6 md:p-8 overflow-y-auto max-w-7xl mx-auto w-full">
+
+    <!-- TOP BAR (Desktop Breadcrumb & Search) -->
+    <header class="hidden md:flex items-center justify-between gap-4 pb-4 mb-4 border-b border-slate-200/60">
+      <div class="flex items-center gap-2 text-xs font-bold text-slate-400">
+        <span class="hover:text-purple-600 cursor-pointer" onclick="switchView('dashboard')">Calx</span>
+        <span>›</span>
+        <span id="header-breadcrumb" class="text-slate-900 font-extrabold">Workspace / All Tools</span>
+      </div>
+
+      <div class="w-full md:w-1/2 relative">
+        <input type="text" id="global-top-search" oninput="handleGlobalSearch(this.value)" placeholder="Search a calculator, conversion, e.g. EMI, kg to lb, USD to INR..." class="w-full pl-9 pr-10 py-2.5 rounded-full bg-white border border-slate-200 text-xs font-semibold text-slate-700 shadow-xs focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all">
+        <span class="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-[18px]">search</span>
+        <span class="absolute right-3 top-2.5 text-[10px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">/</span>
+      </div>
+    </header>
+
+    <!-- LIVE RATES FOREX TICKER BAR -->
+    <div class="bg-white border border-[#eef0f8] rounded-2xl p-3 mb-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <div class="flex items-center gap-2 shrink-0">
+        <span class="px-2.5 py-1 rounded-full bg-purple-100 text-purple-700 font-extrabold text-[10px] tracking-wider uppercase flex items-center gap-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-purple-600 animate-pulse"></span>
+          LIVE RATES
+        </span>
+      </div>
+
+      <div id="forex-ticker-container" class="w-full sm:w-auto overflow-x-auto no-scrollbar flex items-center gap-4 text-xs font-bold py-1">
+        <div class="flex items-center gap-1.5 whitespace-nowrap shrink-0">
+          <span class="text-slate-700">USD/EUR</span>
+          <span id="ticker-usd-eur" class="font-mono text-slate-900">0.9214</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 font-extrabold">▲ +0.12%</span>
+        </div>
+        <div class="flex items-center gap-1.5 whitespace-nowrap shrink-0">
+          <span class="text-slate-700">USD/GBP</span>
+          <span id="ticker-usd-gbp" class="font-mono text-slate-900">0.7862</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 font-extrabold">▲ +0.08%</span>
+        </div>
+        <div class="flex items-center gap-1.5 whitespace-nowrap shrink-0">
+          <span class="text-slate-700">USD/INR</span>
+          <span id="ticker-usd-inr" class="font-mono text-slate-900">83.450</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-rose-50 text-rose-600 font-extrabold">▼ -0.04%</span>
+        </div>
+        <div class="flex items-center gap-1.5 whitespace-nowrap shrink-0">
+          <span class="text-slate-700">USD/JPY</span>
+          <span id="ticker-usd-jpy" class="font-mono text-slate-900">155.20</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 font-extrabold">▲ +0.31%</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 text-[11px] text-slate-400 font-medium shrink-0 self-end sm:self-auto">
+        <button onclick="fetchRealtimeCurrencyRates(true)" class="hover:text-purple-600 flex items-center gap-1">
+          <span id="ticker-refresh-icon" class="material-symbols-outlined text-[14px]">sync</span>
+          <span>Updated 1m ago</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- PAGE VIEW 1: DASHBOARD (MAIN OVERVIEW) -->
+    <div id="view-dashboard" class="page-view-container space-y-6 md:space-y-8 animate-fade-in">
+
+      <!-- HERO SECTION -->
+      <section class="text-center space-y-3 sm:space-y-4 pt-2 sm:pt-4 pb-4 sm:pb-6">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-100/80 text-purple-700 text-[11px] sm:text-xs font-bold border border-purple-200/60 shadow-xs">
+          <span class="material-symbols-outlined text-[15px]">bolt</span>
+          <span>CALX v2.4 — 28+ ENGINES OPERATIONAL &amp; LIVE</span>
+        </div>
+
+        <h2 class="text-2xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight max-w-3xl mx-auto leading-tight">
+          Everything you need to <span class="text-purple-600">calculate</span> and <span class="text-purple-600">convert</span>.
+        </h2>
+
+        <p class="text-xs sm:text-sm font-medium text-slate-500 max-w-2xl mx-auto leading-relaxed px-2">
+          Fast, accurate calculators and converters in one unified interface. Engineered for quantitative speed, mathematical clarity, and institutional reliability.
+        </p>
+
+        <!-- Large Centered Hero Search Bar -->
+        <div class="max-w-xl mx-auto relative pt-1 px-1">
+          <input type="text" id="hero-search-input" oninput="handleGlobalSearch(this.value)" placeholder="Search a calculator or converter (e.g. 'EMI', 'kg to lb', 'USD to EUR', 'Hex')..." class="w-full pl-9 pr-12 py-3 rounded-full bg-white border border-slate-200 text-xs sm:text-sm font-semibold text-slate-800 shadow-md focus:outline-none focus:ring-2 focus:ring-purple-600 transition-all">
+          <span class="material-symbols-outlined absolute left-3.5 top-4.5 text-purple-600 text-[18px]">search</span>
+          <button class="absolute right-3 top-3.5 text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full hidden sm:inline-block">⌘ K</button>
+        </div>
+
+        <!-- Trending Tags -->
+        <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 justify-start sm:justify-center text-[11px] font-semibold text-slate-500 px-1">
+          <span class="font-bold text-slate-400 uppercase text-[10px] tracking-wider shrink-0">TRENDING</span>
+          <button onclick="filterByTag('Standard Calculator')" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 hover:border-purple-300 hover:text-purple-600 shrink-0 transition-all">Standard Calculator</button>
+          <button onclick="filterByTag('Currency')" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 hover:border-purple-300 hover:text-purple-600 shrink-0 transition-all">Currency Live</button>
+          <button onclick="filterByTag('EMI')" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 hover:border-purple-300 hover:text-purple-600 shrink-0 transition-all">EMI Loan</button>
+          <button onclick="filterByTag('Unit')" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 hover:border-purple-300 hover:text-purple-600 shrink-0 transition-all">Unit Converter</button>
+          <button onclick="filterByTag('Age')" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 hover:border-purple-300 hover:text-purple-600 shrink-0 transition-all">Age Calculator</button>
+          <button onclick="filterByTag('Percentages')" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 hover:border-purple-300 hover:text-purple-600 shrink-0 transition-all">Percentages</button>
+          <button onclick="filterByTag('Base')" class="px-2.5 py-1 rounded-full bg-white border border-slate-200 hover:border-purple-300 hover:text-purple-600 shrink-0 transition-all">Base Converter</button>
+        </div>
+      </section>
+
+      <!-- FREQUENTLY USED & STARRED ROW (4 LIVE QUICK CARDS) -->
+      <section class="space-y-3 sm:space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="font-bold text-base sm:text-lg text-slate-900 flex items-center gap-2">
+            <span class="material-symbols-outlined text-purple-600 text-[18px] sm:text-[20px]">star</span>
+            <span>Frequently Used &amp; Starred</span>
+          </h3>
+          <span class="text-[11px] text-slate-400 font-semibold hidden sm:inline-block">Quick access &amp; live widgets</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+
+          <!-- Quick Card 1: Quick Calc -->
+          <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-[#eef0f8] shadow-xs space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg bg-purple-600 text-white flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[16px]">calculate</span>
+                </div>
+                <div>
+                  <h4 class="font-bold text-xs text-slate-900">Quick Calc</h4>
+                  <p class="text-[10px] text-slate-400">Live mini math</p>
+                </div>
+              </div>
+              <span class="material-symbols-outlined text-purple-600 text-[18px]">star</span>
+            </div>
+
+            <!-- Mini Keypad Display -->
+            <div class="bg-slate-50 p-2 rounded-xl border border-slate-200 text-right space-y-0.5">
+              <div id="quick-calc-expr" class="text-[10px] font-mono text-slate-400 truncate">1,250 + 225</div>
+              <div id="quick-calc-val" class="text-base font-extrabold font-mono text-purple-700 truncate">1,475.00</div>
+            </div>
+
+            <div class="grid grid-cols-4 gap-1">
+              <button onclick="quickCalcInput('7')" class="mini-calc-btn">7</button>
+              <button onclick="quickCalcInput('8')" class="mini-calc-btn">8</button>
+              <button onclick="quickCalcInput('9')" class="mini-calc-btn">9</button>
+              <button onclick="quickCalcOp('*')" class="mini-calc-btn mini-calc-btn-op">×</button>
+              <button onclick="quickCalcInput('4')" class="mini-calc-btn">4</button>
+              <button onclick="quickCalcInput('5')" class="mini-calc-btn">5</button>
+              <button onclick="quickCalcInput('6')" class="mini-calc-btn">6</button>
+              <button onclick="quickCalcOp('-')" class="mini-calc-btn mini-calc-btn-op">−</button>
+              <button onclick="quickCalcInput('1')" class="mini-calc-btn">1</button>
+              <button onclick="quickCalcInput('2')" class="mini-calc-btn">2</button>
+              <button onclick="quickCalcInput('3')" class="mini-calc-btn">3</button>
+              <button onclick="quickCalcOp('+')" class="mini-calc-btn mini-calc-btn-op">+</button>
+              <button onclick="quickCalcClear()" class="mini-calc-btn text-rose-600 font-bold">C</button>
+              <button onclick="quickCalcInput('0')" class="mini-calc-btn">0</button>
+              <button onclick="quickCalcInput('.')" class="mini-calc-btn">.</button>
+              <button onclick="quickCalcEval()" class="mini-calc-btn mini-calc-btn-op bg-purple-600 text-white">=</button>
+            </div>
+
+            <div class="flex items-center justify-between text-[10px] pt-1 text-slate-400 font-semibold border-t border-slate-100">
+              <span>Memory: Clean</span>
+              <button onclick="switchView('calculator')" class="text-purple-600 hover:underline">Open full app ↗</button>
+            </div>
+          </div>
+
+          <!-- Quick Card 2: Instant FX -->
+          <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-[#eef0f8] shadow-xs space-y-3 flex flex-col justify-between">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-lg bg-purple-600 text-white flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[16px]">currency_exchange</span>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-xs text-slate-900">Instant FX</h4>
+                    <p class="text-[10px] text-slate-400">ECB Reference Rates</p>
+                  </div>
+                </div>
+                <span class="material-symbols-outlined text-purple-600 text-[18px]">star</span>
+              </div>
+
+              <div class="space-y-2">
+                <div class="flex items-center gap-2">
+                  <input type="number" id="quick-fx-amount" value="100" oninput="runQuickFX()" class="w-full px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs font-bold font-mono">
+                  <select id="quick-fx-from" onchange="runQuickFX()" class="px-2 py-1.5 rounded-lg bg-slate-100 text-xs font-bold">
+                    <option value="USD">USD ($)</option>
+                    <option value="EUR">EUR (€)</option>
+                    <option value="GBP">GBP (£)</option>
+                    <option value="INR">INR (₹)</option>
+                  </select>
+                </div>
+                <div class="flex justify-center">
+                  <button onclick="swapQuickFX()" class="p-1 rounded-full bg-purple-100 text-purple-700 hover:bg-purple-200">
+                    <span class="material-symbols-outlined text-[14px]">swap_vert</span>
+                  </button>
+                </div>
+                <div class="flex items-center gap-2">
+                  <input type="text" id="quick-fx-output" readonly value="93.14" class="w-full px-2.5 py-1.5 rounded-lg bg-purple-50 border border-purple-200 text-xs font-extrabold font-mono text-purple-700">
+                  <select id="quick-fx-to" onchange="runQuickFX()" class="px-2 py-1.5 rounded-lg bg-slate-100 text-xs font-bold">
+                    <option value="EUR">EUR (€)</option>
+                    <option value="USD">USD ($)</option>
+                    <option value="GBP">GBP (£)</option>
+                    <option value="INR">INR (₹)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between text-[10px] pt-1 text-slate-400 font-semibold border-t border-slate-100">
+              <span id="quick-fx-rate-lbl">1 USD = 0.9314 EUR</span>
+              <button onclick="switchView('currency-converter')" class="text-purple-600 hover:underline">FX Engine ↗</button>
+            </div>
+          </div>
+
+          <!-- Quick Card 3: Discount & Tip -->
+          <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-[#eef0f8] shadow-xs space-y-3 flex flex-col justify-between">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-lg bg-purple-600 text-white flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[16px]">percent</span>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-xs text-slate-900">Discount &amp; Tip</h4>
+                    <p class="text-[10px] text-slate-400">Fast split evaluator</p>
+                  </div>
+                </div>
+                <span class="material-symbols-outlined text-purple-600 text-[18px]">star</span>
+              </div>
+
+              <div class="space-y-2">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-[10px] font-bold text-slate-500 uppercase">AMOUNT</span>
+                  <input type="number" id="quick-tip-amount" value="84.00" oninput="runQuickTip()" class="w-24 px-2 py-1 rounded bg-slate-50 border border-slate-200 text-right text-xs font-bold font-mono">
+                </div>
+                <div class="grid grid-cols-4 gap-1 text-[10px] font-bold">
+                  <button onclick="setQuickTipPct(10)" class="py-1 rounded bg-purple-100 text-purple-700">10%</button>
+                  <button onclick="setQuickTipPct(15)" class="py-1 rounded bg-purple-600 text-white">15%</button>
+                  <button onclick="setQuickTipPct(20)" class="py-1 rounded bg-slate-100 text-slate-700">20%</button>
+                  <button onclick="setQuickTipPct(25)" class="py-1 rounded bg-slate-100 text-slate-700">25%</button>
+                </div>
+                <div class="grid grid-cols-2 gap-2 p-2 rounded-lg bg-slate-50 border border-slate-200">
+                  <div>
+                    <span class="text-[9px] text-slate-400 font-bold block">TOTAL WITH TIP</span>
+                    <span id="quick-tip-total" class="text-xs font-extrabold text-slate-900">$96.60</span>
+                  </div>
+                  <div>
+                    <span class="text-[9px] text-slate-400 font-bold block">TIP AMOUNT</span>
+                    <span id="quick-tip-val" class="text-xs font-extrabold text-purple-700">+$12.60</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between text-[10px] pt-1 text-slate-400 font-semibold border-t border-slate-100">
+              <span>Split: 1 person</span>
+              <button onclick="switchView('financial-tools')" class="text-purple-600 hover:underline">Tip Engine ↗</button>
+            </div>
+          </div>
+
+          <!-- Quick Card 4: Quick Length -->
+          <div class="bg-white p-3.5 sm:p-4 rounded-2xl border border-[#eef0f8] shadow-xs space-y-3 flex flex-col justify-between">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <div class="w-7 h-7 rounded-lg bg-purple-600 text-white flex items-center justify-center">
+                    <span class="material-symbols-outlined text-[16px]">straighten</span>
+                  </div>
+                  <div>
+                    <h4 class="font-bold text-xs text-slate-900">Quick Length</h4>
+                    <p class="text-[10px] text-slate-400">Metric ↔ Imperial</p>
+                  </div>
+                </div>
+                <span class="material-symbols-outlined text-purple-600 text-[18px]">star</span>
+              </div>
+
+              <div class="space-y-2">
+                <div class="flex items-center gap-2">
+                  <input type="number" id="quick-len-val" value="10" oninput="runQuickLength()" class="w-full px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs font-bold font-mono">
+                  <span class="text-xs font-bold text-slate-600 whitespace-nowrap">Kilometers</span>
+                </div>
+                <div class="text-center font-bold text-slate-300 text-xs">=</div>
+                <div class="p-2 rounded-lg bg-purple-50 border border-purple-200 flex items-center justify-between">
+                  <span id="quick-len-res" class="text-xs font-extrabold text-purple-700 font-mono">6.2137</span>
+                  <span class="text-xs font-bold text-purple-900">Miles (mi)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between text-[10px] pt-1 text-slate-400 font-semibold border-t border-slate-100">
+              <span>1 km = 0.62137 mi</span>
+              <button onclick="switchView('unit-converters')" class="text-purple-600 hover:underline">Units App ↗</button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- CATEGORY FILTER TABS & VIEW MODE -->
+      <section class="space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200/60">
+          <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1" id="category-filter-tabs">
+            <button onclick="filterEngineCategory('all')" id="tab-cat-all" class="px-3.5 py-1.5 rounded-full bg-white text-purple-700 border border-purple-300 font-bold text-xs shadow-xs shrink-0">All Engines (28)</button>
+            <button onclick="filterEngineCategory('calc')" id="tab-cat-calc" class="px-3.5 py-1.5 rounded-full bg-white hover:bg-slate-50 text-slate-600 font-semibold text-xs transition-all shrink-0">Calculators</button>
+            <button onclick="filterEngineCategory('conv')" id="tab-cat-conv" class="px-3.5 py-1.5 rounded-full bg-white hover:bg-slate-50 text-slate-600 font-semibold text-xs transition-all shrink-0">Converters</button>
+            <button onclick="filterEngineCategory('fin')" id="tab-cat-fin" class="px-3.5 py-1.5 rounded-full bg-white hover:bg-slate-50 text-slate-600 font-semibold text-xs transition-all shrink-0">Financial</button>
+            <button onclick="filterEngineCategory('life')" id="tab-cat-life" class="px-3.5 py-1.5 rounded-full bg-white hover:bg-slate-50 text-slate-600 font-semibold text-xs transition-all shrink-0">Date &amp; Life</button>
+            <button onclick="filterEngineCategory('tech')" id="tab-cat-tech" class="px-3.5 py-1.5 rounded-full bg-white hover:bg-slate-50 text-slate-600 font-semibold text-xs transition-all shrink-0">Programmer &amp; Tech</button>
+            <button onclick="filterEngineCategory('math')" id="tab-cat-math" class="px-3.5 py-1.5 rounded-full bg-white hover:bg-slate-50 text-slate-600 font-semibold text-xs transition-all shrink-0">Math &amp; Physics</button>
+          </div>
+
+          <div class="hidden sm:flex items-center gap-1 text-slate-400 text-xs font-semibold shrink-0">
+            <span>View mode</span>
+            <button class="p-1 rounded bg-white text-purple-600 shadow-xs"><span class="material-symbols-outlined text-[18px]">grid_view</span></button>
+            <button class="p-1 rounded hover:bg-white text-slate-400"><span class="material-symbols-outlined text-[18px]">view_list</span></button>
+          </div>
+        </div>
+
+        <!-- 28 TOOL ENGINE CARDS GRID -->
+        <div id="engine-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+
+          <!-- Card 1: Standard Calculator -->
+          <div class="engine-card bg-white p-4 sm:p-5 rounded-2xl flex flex-col justify-between" data-category="calc" data-tags="standard calculator arithmetic math">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[18px]">calculate</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold text-[9px] uppercase tracking-wider">ARITHMETIC</span>
+                  <span class="material-symbols-outlined text-slate-300 hover:text-purple-600 cursor-pointer text-[18px]">star</span>
+                </div>
+              </div>
+              <h4 class="font-bold text-base text-slate-900">Standard Calculator</h4>
+              <p class="text-xs text-slate-500 leading-relaxed">Fast everyday calculations with rolling history tape, physical keypads, and memory engine.</p>
+            </div>
+            <div class="flex items-center justify-between pt-4 mt-3 border-t border-slate-100 text-[11px]">
+              <span class="text-slate-400 font-medium">Last run this week</span>
+              <button onclick="switchView('calculator')" class="btn-launch">Launch ↗</button>
+            </div>
+          </div>
+
+          <!-- Card 2: Scientific Calculator -->
+          <div class="engine-card bg-white p-4 sm:p-5 rounded-2xl flex flex-col justify-between" data-category="calc math" data-tags="scientific calculator trig log math">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[18px]">functions</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold text-[9px] uppercase tracking-wider">FOG MATH</span>
+                  <span class="material-symbols-outlined text-slate-300 hover:text-purple-600 cursor-pointer text-[18px]">star</span>
+                </div>
+              </div>
+              <h4 class="font-bold text-base text-slate-900">Scientific Calculator</h4>
+              <p class="text-xs text-slate-500 leading-relaxed">Comprehensive trigonometric formulas, logarithms, exponential powers, factorials, and constants.</p>
+            </div>
+            <div class="flex items-center justify-between pt-4 mt-3 border-t border-slate-100 text-[11px]">
+              <span class="text-slate-400 font-medium">Dual-line display</span>
+              <button onclick="switchView('calculator')" class="btn-launch">Launch ↗</button>
+            </div>
+          </div>
+
+          <!-- Card 3: Unit Converter -->
+          <div class="engine-card bg-white p-4 sm:p-5 rounded-2xl flex flex-col justify-between" data-category="conv" data-tags="unit converter length weight volume data">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[18px]">sync_alt</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold text-[9px] uppercase tracking-wider">UNIVERSAL</span>
+                  <span class="material-symbols-outlined text-slate-300 hover:text-purple-600 cursor-pointer text-[18px]">star</span>
+                </div>
+              </div>
+              <h4 class="font-bold text-base text-slate-900">Unit Converter</h4>
+              <p class="text-xs text-slate-500 leading-relaxed">Convert across 14 categories: length, weight, area, volume, velocity, temperature, and data.</p>
+            </div>
+            <div class="flex items-center justify-between pt-4 mt-3 border-t border-slate-100 text-[11px]">
+              <span class="text-slate-400 font-medium">120+ standard units</span>
+              <button onclick="switchView('unit-converters')" class="btn-launch">Launch ↗</button>
+            </div>
+          </div>
+
+          <!-- Card 4: Currency Converter -->
+          <div class="engine-card bg-white p-4 sm:p-5 rounded-2xl flex flex-col justify-between" data-category="conv fin" data-tags="currency live forex exchange usd eur gbp inr">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[18px]">currency_exchange</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 font-bold text-[9px] uppercase tracking-wider">REAL TIME FX</span>
+                  <span class="material-symbols-outlined text-purple-600 text-[18px]">star</span>
+                </div>
+              </div>
+              <h4 class="font-bold text-base text-slate-900">Currency Converter</h4>
+              <p class="text-xs text-slate-500 leading-relaxed">Live institutional exchange rates with interactive historical 30-day sparklines &amp; multi-provider failover.</p>
+            </div>
+            <div class="flex items-center justify-between pt-4 mt-3 border-t border-slate-100 text-[11px]">
+              <span class="text-slate-400 font-medium">24/7 Live forex rates</span>
+              <button onclick="switchView('currency-converter')" class="btn-launch">Launch ↗</button>
+            </div>
+          </div>
+
+          <!-- Card 5: Temperature Converter -->
+          <div class="engine-card bg-white p-4 sm:p-5 rounded-2xl flex flex-col justify-between" data-category="conv" data-tags="temperature celsius fahrenheit kelvin thermal">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[18px]">thermostat</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold text-[9px] uppercase tracking-wider">THERMAL</span>
+                  <span class="material-symbols-outlined text-slate-300 hover:text-purple-600 cursor-pointer text-[18px]">star</span>
+                </div>
+              </div>
+              <h4 class="font-bold text-base text-slate-900">Temperature Converter</h4>
+              <p class="text-xs text-slate-500 leading-relaxed">Simultaneous instant 3-way conversion between Celsius (°C), Fahrenheit (°F), and Kelvin (K).</p>
+            </div>
+            <div class="flex items-center justify-between pt-4 mt-3 border-t border-slate-100 text-[11px]">
+              <span class="text-slate-400 font-medium">Absolute zero checked</span>
+              <button onclick="switchView('unit-converters')" class="btn-launch">Launch ↗</button>
+            </div>
+          </div>
+
+          <!-- Card 6: Percentage Calculator -->
+          <div class="engine-card bg-white p-4 sm:p-5 rounded-2xl flex flex-col justify-between" data-category="calc everyday" data-tags="percentage percent discount growth ratio">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[18px]">percent</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold text-[9px] uppercase tracking-wider">EVERYDAY</span>
+                  <span class="material-symbols-outlined text-slate-300 hover:text-purple-600 cursor-pointer text-[18px]">star</span>
+                </div>
+              </div>
+              <h4 class="font-bold text-base text-slate-900">Percentage Calculator</h4>
+              <p class="text-xs text-slate-500 leading-relaxed">Evaluate 5 common variants: what is X% of Y, % growth/decay, absolute percent change, and ratios.</p>
+            </div>
+            <div class="flex items-center justify-between pt-4 mt-3 border-t border-slate-100 text-[11px]">
+              <span class="text-slate-400 font-medium">5 functional modes</span>
+              <button onclick="switchView('financial-tools')" class="btn-launch">Launch ↗</button>
+            </div>
+          </div>
+
+          <!-- Card 7: Discount & Tax Calculator -->
+          <div class="engine-card bg-white p-4 sm:p-5 rounded-2xl flex flex-col justify-between" data-category="fin" data-tags="discount tax gst vat retail commerce">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[18px]">sell</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold text-[9px] uppercase tracking-wider">COMMERCE</span>
+                  <span class="material-symbols-outlined text-slate-300 hover:text-purple-600 cursor-pointer text-[18px]">star</span>
+                </div>
+              </div>
+              <h4 class="font-bold text-base text-slate-900">Discount &amp; Tax Calculator</h4>
+              <p class="text-xs text-slate-500 leading-relaxed">Calculate final checkout totals with combined discounts, regional sales tax, and GST additions.</p>
+            </div>
+            <div class="flex items-center justify-between pt-4 mt-3 border-t border-slate-100 text-[11px]">
+              <span class="text-slate-400 font-medium">Dual stack discount</span>
+              <button onclick="switchView('financial-tools')" class="btn-launch">Launch ↗</button>
+            </div>
+          </div>
+
+          <!-- Card 8: EMI & Loan Calculator -->
+          <div class="engine-card bg-white p-4 sm:p-5 rounded-2xl flex flex-col justify-between" data-category="fin" data-tags="emi loan interest mortgage financial">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[18px]">account_balance</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 font-bold text-[9px] uppercase tracking-wider">CREDIT ENGINE</span>
+                  <span class="material-symbols-outlined text-purple-600 text-[18px]">star</span>
+                </div>
+              </div>
+              <h4 class="font-bold text-base text-slate-900">EMI &amp; Loan Calculator</h4>
+              <p class="text-xs text-slate-500 leading-relaxed">Accurate monthly installments, total interest payouts, loan balance curves, and principal breakdown.</p>
+            </div>
+            <div class="flex items-center justify-between pt-4 mt-3 border-t border-slate-100 text-[11px]">
+              <span class="text-slate-400 font-medium">Includes amortization</span>
+              <button onclick="switchView('financial-tools')" class="btn-launch">Launch ↗</button>
+            </div>
+          </div>
+
+          <!-- Card 9: Simple Interest Calculator -->
+          <div class="engine-card bg-white p-4 sm:p-5 rounded-2xl flex flex-col justify-between" data-category="fin" data-tags="interest simple yield deposit financial">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[18px]">savings</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold text-[9px] uppercase tracking-wider">YIELD</span>
+                  <span class="material-symbols-outlined text-slate-300 hover:text-purple-600 cursor-pointer text-[18px]">star</span>
+                </div>
+              </div>
+              <h4 class="font-bold text-base text-slate-900">Simple Interest Calculator</h4>
+              <p class="text-xs text-slate-500 leading-relaxed">Determine linear interest accrued over days, months, or years using standard PRT/100 formulas.</p>
+            </div>
+            <div class="flex items-center justify-between pt-4 mt-3 border-t border-slate-100 text-[11px]">
+              <span class="text-slate-400 font-medium">Standard formula fit</span>
+              <button onclick="switchView('financial-tools')" class="btn-launch">Launch ↗</button>
+            </div>
+          </div>
+
+          <!-- Card 10: Compound Interest Engine -->
+          <div class="engine-card bg-white p-4 sm:p-5 rounded-2xl flex flex-col justify-between" data-category="fin" data-tags="compound interest cagr growth sip investment">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[18px]">trending_up</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold text-[9px] uppercase tracking-wider">GROWTH</span>
+                  <span class="material-symbols-outlined text-slate-300 hover:text-purple-600 cursor-pointer text-[18px]">star</span>
+                </div>
+              </div>
+              <h4 class="font-bold text-base text-slate-900">Compound Interest Engine</h4>
+              <p class="text-xs text-slate-500 leading-relaxed">Annual, semi-annual, monthly, and continuous compounding simulator with investment projection.</p>
+            </div>
+            <div class="flex items-center justify-between pt-4 mt-3 border-t border-slate-100 text-[11px]">
+              <span class="text-slate-400 font-medium">Exponential curves</span>
+              <button onclick="switchView('financial-tools')" class="btn-launch">Launch ↗</button>
+            </div>
+          </div>
+
+          <!-- Card 11: Age & Milestone Engine -->
+          <div class="engine-card bg-white p-4 sm:p-5 rounded-2xl flex flex-col justify-between" data-category="life" data-tags="age birthday milestone days health life">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[18px]">cake</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold text-[9px] uppercase tracking-wider">TIME &amp; LIFE</span>
+                  <span class="material-symbols-outlined text-slate-300 hover:text-purple-600 cursor-pointer text-[18px]">star</span>
+                </div>
+              </div>
+              <h4 class="font-bold text-base text-slate-900">Age &amp; Milestone Engine</h4>
+              <p class="text-xs text-slate-500 leading-relaxed">Calculate exact completed years, months, days, total sleeping hours, weekday of birth, and upcoming milestones.</p>
+            </div>
+            <div class="flex items-center justify-between pt-4 mt-3 border-t border-slate-100 text-[11px]">
+              <span class="text-slate-400 font-medium">Accurate leap years</span>
+              <button onclick="switchView('date-time-health')" class="btn-launch">Launch ↗</button>
+            </div>
+          </div>
+
+          <!-- Card 12: Date Difference Engine -->
+          <div class="engine-card bg-white p-4 sm:p-5 rounded-2xl flex flex-col justify-between" data-category="life" data-tags="date difference days business hours chronology">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[18px]">calendar_month</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold text-[9px] uppercase tracking-wider">CHRONOLOGY</span>
+                  <span class="material-symbols-outlined text-slate-300 hover:text-purple-600 cursor-pointer text-[18px]">star</span>
+                </div>
+              </div>
+              <h4 class="font-bold text-base text-slate-900">Date Difference Engine</h4>
+              <p class="text-xs text-slate-500 leading-relaxed">Compare exact working days, holidays excluded, total elapsed weeks, and date offsets.</p>
+            </div>
+            <div class="flex items-center justify-between pt-4 mt-3 border-t border-slate-100 text-[11px]">
+              <span class="text-slate-400 font-medium">Business day logic</span>
+              <button onclick="switchView('date-time-health')" class="btn-launch">Launch ↗</button>
+            </div>
+          </div>
+
+          <!-- Card 13: Time & Hour Calculator -->
+          <div class="engine-card bg-white p-4 sm:p-5 rounded-2xl flex flex-col justify-between" data-category="life" data-tags="time hours minutes duration clock">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[18px]">schedule</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold text-[9px] uppercase tracking-wider">PRECISION</span>
+                  <span class="material-symbols-outlined text-slate-300 hover:text-purple-600 cursor-pointer text-[18px]">star</span>
+                </div>
+              </div>
+              <h4 class="font-bold text-base text-slate-900">Time &amp; Hour Calculator</h4>
+              <p class="text-xs text-slate-500 leading-relaxed">Add or subtract HH:MM:SS timestamps, work shift timecards, working hours, and time math.</p>
+            </div>
+            <div class="flex items-center justify-between pt-4 mt-3 border-t border-slate-100 text-[11px]">
+              <span class="text-slate-400 font-medium">Timecard ready</span>
+              <button onclick="switchView('date-time-health')" class="btn-launch">Launch ↗</button>
+            </div>
+          </div>
+
+          <!-- Card 14: Speed & Pace Calculator -->
+          <div class="engine-card bg-white p-4 sm:p-5 rounded-2xl flex flex-col justify-between" data-category="conv life" data-tags="speed pace running cycling distance athletics">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[18px]">directions_run</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold text-[9px] uppercase tracking-wider">ATHLETICS</span>
+                  <span class="material-symbols-outlined text-slate-300 hover:text-purple-600 cursor-pointer text-[18px]">star</span>
+                </div>
+              </div>
+              <h4 class="font-bold text-base text-slate-900">Speed &amp; Pace Calculator</h4>
+              <p class="text-xs text-slate-500 leading-relaxed">Running and cycling split tracker with min/km, min/mile pace converter, and finish time estimates.</p>
+            </div>
+            <div class="flex items-center justify-between pt-4 mt-3 border-t border-slate-100 text-[11px]">
+              <span class="text-slate-400 font-medium">Race split targets</span>
+              <button onclick="switchView('unit-converters')" class="btn-launch">Launch ↗</button>
+            </div>
+          </div>
+
+          <!-- Card 15: 2D Area Calculator -->
+          <div class="engine-card bg-white p-4 sm:p-5 rounded-2xl flex flex-col justify-between" data-category="math" data-tags="area geometry 2d circle triangle rectangle square">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[18px]">crop_free</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold text-[9px] uppercase tracking-wider">GEOMETRY</span>
+                  <span class="material-symbols-outlined text-slate-300 hover:text-purple-600 cursor-pointer text-[18px]">star</span>
+                </div>
+              </div>
+              <h4 class="font-bold text-base text-slate-900">2D Area Calculator</h4>
+              <p class="text-xs text-slate-500 leading-relaxed">Instant surface area evaluation for squares, rectangles, circles, ellipses, triangles, and trapezoids.</p>
+            </div>
+            <div class="flex items-center justify-between pt-4 mt-3 border-t border-slate-100 text-[11px]">
+              <span class="text-slate-400 font-medium">Interactive diagrams</span>
+              <button onclick="switchView('math-engineering')" class="btn-launch">Launch ↗</button>
+            </div>
+          </div>
+
+          <!-- Card 16: 3D Volume & Capacity -->
+          <div class="engine-card bg-white p-4 sm:p-5 rounded-2xl flex flex-col justify-between" data-category="math" data-tags="volume 3d sphere cylinder cone cube solids">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[18px]">view_in_ar</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold text-[9px] uppercase tracking-wider">3D SOLIDS</span>
+                  <span class="material-symbols-outlined text-slate-300 hover:text-purple-600 cursor-pointer text-[18px]">star</span>
+                </div>
+              </div>
+              <h4 class="font-bold text-base text-slate-900">3D Volume &amp; Capacity</h4>
+              <p class="text-xs text-slate-500 leading-relaxed">Evaluate solid volume, surface area, and fluid capacity for spheres, cones, cylinders, and pyramids.</p>
+            </div>
+            <div class="flex items-center justify-between pt-4 mt-3 border-t border-slate-100 text-[11px]">
+              <span class="text-slate-400 font-medium">Isometric previews</span>
+              <button onclick="switchView('math-engineering')" class="btn-launch">Launch ↗</button>
+            </div>
+          </div>
+
+          <!-- Card 17: Number Base Converter -->
+          <div class="engine-card bg-white p-4 sm:p-5 rounded-2xl flex flex-col justify-between" data-category="tech" data-tags="radix base hex binary octal decimal programmer">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[18px]">developer_board</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 font-bold text-[9px] uppercase tracking-wider">TECH &amp; BITS</span>
+                  <span class="material-symbols-outlined text-purple-600 text-[18px]">star</span>
+                </div>
+              </div>
+              <h4 class="font-bold text-base text-slate-900">Number Base Converter</h4>
+              <p class="text-xs text-slate-500 leading-relaxed">Simultaneous multi-radix translation across Base2 (Binary), Base8 (Octal), Base10 (Decimal), &amp; Base16 (Hex).</p>
+            </div>
+            <div class="flex items-center justify-between pt-4 mt-3 border-t border-slate-100 text-[11px]">
+              <span class="text-slate-400 font-medium">Bitwise shift support</span>
+              <button onclick="switchView('math-engineering')" class="btn-launch">Launch ↗</button>
+            </div>
+          </div>
+
+          <!-- Card 18: Data Storage Converter -->
+          <div class="engine-card bg-white p-4 sm:p-5 rounded-2xl flex flex-col justify-between" data-category="tech conv" data-tags="data storage megabytes gigabytes terabytes bytes storage">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[18px]">hard_drive</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold text-[9px] uppercase tracking-wider">STORAGE</span>
+                  <span class="material-symbols-outlined text-slate-300 hover:text-purple-600 cursor-pointer text-[18px]">star</span>
+                </div>
+              </div>
+              <h4 class="font-bold text-base text-slate-900">Data Storage Converter</h4>
+              <p class="text-xs text-slate-500 leading-relaxed">Accurately transform between decimal (GB, MB, TB) and binary (GiB, MiB, TiB) memory standards.</p>
+            </div>
+            <div class="flex items-center justify-between pt-4 mt-3 border-t border-slate-100 text-[11px]">
+              <span class="text-slate-400 font-medium">1000 vs 1024 bytes</span>
+              <button onclick="switchView('unit-converters')" class="btn-launch">Launch ↗</button>
+            </div>
+          </div>
+
+          <!-- Card 19: Ohm's Law & Circuit Power -->
+          <div class="engine-card bg-white p-4 sm:p-5 rounded-2xl flex flex-col justify-between" data-category="math" data-tags="ohms law voltage current resistance watts physics engineering">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[18px]">electric_bolt</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold text-[9px] uppercase tracking-wider">PHYSICS</span>
+                  <span class="material-symbols-outlined text-slate-300 hover:text-purple-600 cursor-pointer text-[18px]">star</span>
+                </div>
+              </div>
+              <h4 class="font-bold text-base text-slate-900">Ohm's Law &amp; Circuit Power</h4>
+              <p class="text-xs text-slate-500 leading-relaxed">Enter any two values (Voltage, Current, Resistance, or Wattage) to instantly solve electrical parameters.</p>
+            </div>
+            <div class="flex items-center justify-between pt-4 mt-3 border-t border-slate-100 text-[11px]">
+              <span class="text-slate-400 font-medium">Full quadrant wheel</span>
+              <button onclick="switchView('math-engineering')" class="btn-launch">Launch ↗</button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- BOTTOM KEYBINDING BANNER -->
+      <section class="bg-white p-4 sm:p-6 rounded-2xl border border-[#eef0f8] shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-6">
+        <div class="flex items-center gap-3.5">
+          <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-[20px] sm:text-[24px]">keyboard</span>
+          </div>
+          <div>
+            <h4 class="font-bold text-sm sm:text-base text-slate-900">Speed Through Computations with Keybindings</h4>
+            <p class="text-xs text-slate-500 mt-0.5">Calculated for power users. Press <kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded text-[10px] font-bold text-slate-700">?</kbd> anywhere to bring up universal shortcuts.</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2.5 w-full md:w-auto justify-end shrink-0">
+          <button onclick="openShortcutsModal()" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all flex-1 md:flex-initial text-center">Keyboard Guide</button>
+          <button onclick="openSearchModal()" class="px-3.5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all shadow-md shadow-purple-200 flex-1 md:flex-initial text-center">Request Engine</button>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- PAGE VIEW 2: CALCULATOR WORKSPACE (INLINE DEDICATED VIEW) -->
+    <div id="view-calculator" class="page-view-container hidden space-y-6 animate-fade-in">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200/60">
+        <div class="flex items-center gap-3">
+          <button onclick="switchView('dashboard')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-purple-50 hover:border-purple-300 text-purple-700 text-xs font-bold transition-all">
+            <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+            <span>Back to Dashboard</span>
+          </button>
+          <h3 class="font-extrabold text-xl text-slate-900">Standard &amp; Scientific Calculator</h3>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm max-w-3xl mx-auto space-y-5">
+        <div class="bg-white border border-slate-200 p-6 rounded-2xl space-y-2 text-right relative overflow-hidden shadow-xs">
+          <div id="calc-mem-dot" class="absolute top-3 left-4 hidden flex items-center gap-1 text-[11px] font-bold text-purple-700 bg-purple-100 px-2 py-0.5 rounded-full">
+            <span class="w-2 h-2 rounded-full bg-purple-600 animate-pulse"></span>
+            <span>MEMORY ACTIVE</span>
+          </div>
+          <div id="display-expr" class="text-sm font-mono text-slate-500 font-semibold truncate min-h-[1.25rem]">0</div>
+          <div class="flex items-center justify-between gap-4">
+            <button onclick="copyCalcResult()" title="Copy Result" class="text-slate-400 hover:text-purple-700 transition-colors">
+              <span class="material-symbols-outlined text-[18px]">content_copy</span>
+            </button>
+            <div id="display-val" class="text-3xl sm:text-4xl font-extrabold font-mono text-slate-900 tracking-tight truncate">1,475.00</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-4 gap-2 text-xs font-bold">
+          <button onclick="calcMemory('MC')" class="py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700">MC</button>
+          <button onclick="calcMemory('MR')" class="py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700">MR</button>
+          <button onclick="calcMemory('M+')" class="py-2.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-700">M+</button>
+          <button onclick="calcMemory('M-')" class="py-2.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-700">M-</button>
+        </div>
+
+        <div class="grid grid-cols-5 gap-2">
+          <button onclick="calcInputFunc('sin(')" class="calc-btn calc-btn-sci">sin</button>
+          <button onclick="calcInputFunc('cos(')" class="calc-btn calc-btn-sci">cos</button>
+          <button onclick="calcInputFunc('tan(')" class="calc-btn calc-btn-sci">tan</button>
+          <button onclick="calcInputFunc('log(')" class="calc-btn calc-btn-sci">log</button>
+          <button onclick="calcInputFunc('ln(')" class="calc-btn calc-btn-sci">ln</button>
+          <button onclick="calcInputFunc('√(')" class="calc-btn calc-btn-sci">√</button>
+          <button onclick="calcInputFunc('^2')" class="calc-btn calc-btn-sci">x²</button>
+          <button onclick="calcInputOp('^')" class="calc-btn calc-btn-sci">xʸ</button>
+          <button onclick="calcInputConst('π')" class="calc-btn calc-btn-sci">π</button>
+          <button onclick="calcInputConst('e')" class="calc-btn calc-btn-sci">e</button>
+        </div>
+
+        <div class="grid grid-cols-4 gap-2.5">
+          <button onclick="calcClearAll()" class="calc-btn calc-btn-action">AC</button>
+          <button onclick="calcBackspace()" class="calc-btn calc-btn-action">⌫</button>
+          <button onclick="calcInputOp('%')" class="calc-btn calc-btn-op">%</button>
+          <button onclick="calcInputOp('÷')" class="calc-btn calc-btn-op">÷</button>
+          <button onclick="calcInputDigit('7')" class="calc-btn">7</button>
+          <button onclick="calcInputDigit('8')" class="calc-btn">8</button>
+          <button onclick="calcInputDigit('9')" class="calc-btn">9</button>
+          <button onclick="calcInputOp('×')" class="calc-btn calc-btn-op">×</button>
+          <button onclick="calcInputDigit('4')" class="calc-btn">4</button>
+          <button onclick="calcInputDigit('5')" class="calc-btn">5</button>
+          <button onclick="calcInputDigit('6')" class="calc-btn">6</button>
+          <button onclick="calcInputOp('-')" class="calc-btn calc-btn-op">−</button>
+          <button onclick="calcInputDigit('1')" class="calc-btn">1</button>
+          <button onclick="calcInputDigit('2')" class="calc-btn">2</button>
+          <button onclick="calcInputDigit('3')" class="calc-btn">3</button>
+          <button onclick="calcInputOp('+')" class="calc-btn calc-btn-op">+</button>
+          <button onclick="calcInputDigit('0')" class="calc-btn col-span-2">0</button>
+          <button onclick="calcInputDigit('.')" class="calc-btn">.</button>
+          <button onclick="calcEvaluate()" class="calc-btn calc-btn-equals">=</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE VIEW 3: CURRENCY CONVERTER WORKSPACE -->
+    <div id="view-currency-converter" class="page-view-container hidden space-y-6 animate-fade-in">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200/60">
+        <div class="flex items-center gap-3">
+          <button onclick="switchView('dashboard')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-purple-50 hover:border-purple-300 text-purple-700 text-xs font-bold transition-all">
+            <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+            <span>Back to Dashboard</span>
+          </button>
+          <h3 class="font-extrabold text-xl text-slate-900">24/7 Real-Time Currency Converter</h3>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+        <!-- Live Rate Header & Refresh -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+          <div>
+            <h4 id="curr-rate-headline" class="text-sm sm:text-base font-extrabold text-purple-700">1 USD = 0.9214 EUR</h4>
+            <p id="curr-rate-inverse" class="text-xs text-slate-400 font-medium">1 EUR = 1.0853 USD</p>
+          </div>
+          <button onclick="fetchRealtimeCurrencyRates(true)" class="px-3 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 text-purple-700 text-xs font-bold flex items-center gap-1 shrink-0 self-start sm:self-auto">
+            <span id="rate-refresh-icon" class="material-symbols-outlined text-[16px]">sync</span>
+            <span>Refresh FX Rates</span>
+          </button>
+        </div>
+
+        <!-- CURRENCY INPUT & CONVERSION ROW WITH INLINE SEARCHABLE DROPDOWNS -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3.5 items-center">
+          <!-- Amount -->
+          <div class="md:col-span-3 space-y-1">
+            <label class="text-xs font-bold text-slate-600">Amount to Convert</label>
+            <input type="number" id="curr-input-amount" value="100" oninput="runCurrencyConversion()" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 font-mono text-base font-bold focus:outline-none focus:ring-2 focus:ring-purple-600">
+          </div>
+
+          <!-- From Currency Searchable Picker -->
+          <div class="md:col-span-4 space-y-1 relative" id="curr-from-wrapper">
+            <label class="text-xs font-bold text-slate-600">From Currency</label>
+            <button type="button" id="curr-from-trigger" onclick="toggleCurrencyPicker('from', event)" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 hover:border-purple-400 flex items-center justify-between text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600 transition-all">
+              <div class="flex items-center gap-2 truncate">
+                <span id="curr-from-flag-badge" class="px-2 py-0.5 rounded-md bg-purple-100 text-purple-800 font-extrabold text-xs shrink-0">🇺🇸 USD</span>
+                <span id="curr-from-label" class="truncate font-bold text-slate-900">US Dollar ($)</span>
+              </div>
+              <span class="material-symbols-outlined text-[18px] text-slate-400 shrink-0">unfold_more</span>
+            </button>
+            <input type="hidden" id="curr-select-from" value="USD">
+
+            <!-- Searchable Dropdown Popup -->
+            <div id="curr-from-dropdown" class="hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-white border border-slate-200 rounded-2xl shadow-xl p-2.5 space-y-2 max-h-72 flex flex-col">
+              <div class="relative shrink-0">
+                <input type="text" id="search-from-curr" oninput="filterCustomCurrencyOptions('from', this.value)" placeholder="Search currency or country..." class="w-full pl-8 pr-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600">
+                <span class="material-symbols-outlined absolute left-2.5 top-2 text-purple-600 text-[16px]">search</span>
+              </div>
+              <div id="list-from-curr" class="overflow-y-auto space-y-0.5 max-h-52 pr-1">
+              </div>
+            </div>
+          </div>
+
+          <!-- Swap Button -->
+          <div class="md:col-span-1 flex justify-center pt-2 md:pt-4">
+            <button type="button" onclick="swapCurrenciesMain()" title="Swap From / To" class="p-2.5 rounded-full bg-purple-100 text-purple-700 hover:bg-purple-200 transition-transform active:scale-95 shadow-xs">
+              <span class="material-symbols-outlined text-[18px]">swap_horiz</span>
+            </button>
+          </div>
+
+          <!-- To Currency Searchable Picker -->
+          <div class="md:col-span-4 space-y-1 relative" id="curr-to-wrapper">
+            <label class="text-xs font-bold text-slate-600">To Currency</label>
+            <button type="button" id="curr-to-trigger" onclick="toggleCurrencyPicker('to', event)" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200 hover:border-purple-400 flex items-center justify-between text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600 transition-all">
+              <div class="flex items-center gap-2 truncate">
+                <span id="curr-to-flag-badge" class="px-2 py-0.5 rounded-md bg-purple-100 text-purple-800 font-extrabold text-xs shrink-0">🇪🇺 EUR</span>
+                <span id="curr-to-label" class="truncate font-bold text-slate-900">Euro (€)</span>
+              </div>
+              <span class="material-symbols-outlined text-[18px] text-slate-400 shrink-0">unfold_more</span>
+            </button>
+            <input type="hidden" id="curr-select-to" value="EUR">
+
+            <!-- Searchable Dropdown Popup -->
+            <div id="curr-to-dropdown" class="hidden absolute left-0 right-0 top-full mt-1.5 z-50 bg-white border border-slate-200 rounded-2xl shadow-xl p-2.5 space-y-2 max-h-72 flex flex-col">
+              <div class="relative shrink-0">
+                <input type="text" id="search-to-curr" oninput="filterCustomCurrencyOptions('to', this.value)" placeholder="Search currency or country..." class="w-full pl-8 pr-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-600">
+                <span class="material-symbols-outlined absolute left-2.5 top-2 text-purple-600 text-[16px]">search</span>
+              </div>
+              <div id="list-to-curr" class="overflow-y-auto space-y-0.5 max-h-52 pr-1">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONVERTED RESULT DISPLAY -->
+        <div class="p-4 rounded-xl bg-purple-50/70 border border-purple-200 space-y-1">
+          <span class="text-xs text-slate-600 font-bold">Converted Amount</span>
+          <input type="text" id="curr-output-amount" readonly class="w-full bg-transparent font-mono text-2xl sm:text-3xl font-extrabold text-slate-900 focus:outline-none">
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE VIEW 4: UNIT CONVERTERS WORKSPACE -->
+    <div id="view-unit-converters" class="page-view-container hidden space-y-6 animate-fade-in">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200/60">
+        <div class="flex items-center gap-3">
+          <button onclick="switchView('dashboard')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-purple-50 hover:border-purple-300 text-purple-700 text-xs font-bold transition-all">
+            <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+            <span>Back to Dashboard</span>
+          </button>
+          <h3 class="font-extrabold text-xl text-slate-900">Multi-Unit &amp; Data Converter</h3>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+        <div class="flex flex-wrap items-center gap-1.5 pb-3 border-b border-slate-100">
+          <button onclick="setUnitCategory('length')" data-unit-cat="length" class="unit-tab-btn px-3.5 py-1.5 rounded-full bg-purple-600 text-white font-bold text-xs">Length</button>
+          <button onclick="setUnitCategory('weight')" data-unit-cat="weight" class="unit-tab-btn px-3.5 py-1.5 rounded-full bg-slate-100 text-slate-600 font-bold text-xs">Weight</button>
+          <button onclick="setUnitCategory('volume')" data-unit-cat="volume" class="unit-tab-btn px-3.5 py-1.5 rounded-full bg-slate-100 text-slate-600 font-bold text-xs">Volume</button>
+          <button onclick="setUnitCategory('temp')" data-unit-cat="temp" class="unit-tab-btn px-3.5 py-1.5 rounded-full bg-slate-100 text-slate-600 font-bold text-xs">Temperature</button>
+          <button onclick="setUnitCategory('speed')" data-unit-cat="speed" class="unit-tab-btn px-3.5 py-1.5 rounded-full bg-slate-100 text-slate-600 font-bold text-xs">Speed</button>
+          <button onclick="setUnitCategory('data')" data-unit-cat="data" class="unit-tab-btn px-3.5 py-1.5 rounded-full bg-slate-100 text-slate-600 font-bold text-xs">Data</button>
+          <button onclick="setUnitCategory('area')" data-unit-cat="area" class="unit-tab-btn px-3.5 py-1.5 rounded-full bg-slate-100 text-slate-600 font-bold text-xs">Area</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-11 gap-3 items-center">
+          <div class="md:col-span-4 space-y-1">
+            <label class="text-xs font-bold text-slate-600">Value</label>
+            <input type="number" id="unit-input-value" value="1" oninput="runUnitConversion()" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 font-mono text-base font-bold">
+            <select id="unit-select-from" onchange="runUnitConversion()" class="w-full mt-1.5 px-3 py-2 rounded-xl bg-slate-100 text-xs font-semibold">
+            </select>
+          </div>
+          <div class="md:col-span-1 flex justify-center pt-4">
+            <button onclick="swapUnits()" class="p-2.5 rounded-full bg-purple-100 text-purple-700 hover:bg-purple-200">
+              <span class="material-symbols-outlined text-[18px]">swap_horiz</span>
+            </button>
+          </div>
+          <div class="md:col-span-6 space-y-1">
+            <label class="text-xs font-bold text-slate-600">Converted Equivalent</label>
+            <input type="text" id="unit-output-value" readonly class="w-full px-4 py-2.5 rounded-xl bg-purple-50/70 border border-purple-200 text-slate-900 font-mono text-base font-extrabold">
+            <select id="unit-select-to" onchange="runUnitConversion()" class="w-full mt-1.5 px-3 py-2 rounded-xl bg-slate-100 text-xs font-semibold">
+            </select>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-100 space-y-2">
+          <h4 class="font-bold text-xs uppercase tracking-wider text-slate-400">Equivalent Units Matrix</h4>
+          <div id="unit-matrix-grid" class="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE VIEW 5: FINANCIAL TOOLS WORKSPACE -->
+    <div id="view-financial-tools" class="page-view-container hidden space-y-6 animate-fade-in">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200/60">
+        <div class="flex items-center gap-3">
+          <button onclick="switchView('dashboard')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-purple-50 hover:border-purple-300 text-purple-700 text-xs font-bold transition-all">
+            <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+            <span>Back to Dashboard</span>
+          </button>
+          <h3 class="font-extrabold text-xl text-slate-900">Financial Calculations Suite</h3>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+        <div class="flex flex-wrap items-center gap-1.5 pb-3 border-b border-slate-100">
+          <button onclick="setFinTool('emi')" data-fin-tool="emi" class="fin-tab-btn px-3.5 py-1.5 rounded-full bg-purple-600 text-white font-bold text-xs">Loan EMI</button>
+          <button onclick="setFinTool('ci')" data-fin-tool="ci" class="fin-tab-btn px-3.5 py-1.5 rounded-full bg-slate-100 text-slate-600 font-bold text-xs">Compound Interest</button>
+          <button onclick="setFinTool('roi')" data-fin-tool="roi" class="fin-tab-btn px-3.5 py-1.5 rounded-full bg-slate-100 text-slate-600 font-bold text-xs">ROI</button>
+          <button onclick="setFinTool('gst')" data-fin-tool="gst" class="fin-tab-btn px-3.5 py-1.5 rounded-full bg-slate-100 text-slate-600 font-bold text-xs">GST / Tax</button>
+          <button onclick="setFinTool('tip')" data-fin-tool="tip" class="fin-tab-btn px-3.5 py-1.5 rounded-full bg-slate-100 text-slate-600 font-bold text-xs">Tip Split</button>
+        </div>
+
+        <div id="fin-box-emi" class="fin-tool-box space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-slate-600">Principal Amount ($)</label>
+              <input type="number" id="inp-emi-amount" value="100000" oninput="calculateEMI()" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 font-bold text-xs">
+            </div>
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-slate-600">Rate (% p.a.)</label>
+              <input type="number" id="inp-emi-rate" value="8.5" step="0.1" oninput="calculateEMI()" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 font-bold text-xs">
+            </div>
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-slate-600">Tenure (Years)</label>
+              <input type="number" id="inp-emi-tenure" value="15" oninput="calculateEMI()" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 font-bold text-xs">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4 p-4 rounded-xl bg-purple-50/70 border border-purple-200 text-slate-900">
+            <div>
+              <span class="text-xs text-slate-600 font-semibold">Monthly EMI</span>
+              <div id="res-emi-monthly" class="text-xl font-extrabold text-slate-900 font-mono">$984.74</div>
+            </div>
+            <div>
+              <span class="text-xs text-slate-600 font-semibold">Payable Interest</span>
+              <div id="res-emi-interest" class="text-xl font-bold text-purple-700 font-mono">$77,253</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="fin-box-ci" class="fin-tool-box hidden space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-slate-600">Principal ($)</label>
+              <input type="number" id="inp-ci-principal" value="10000" oninput="calculateCompoundInterest()" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 font-bold text-xs">
+            </div>
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-slate-600">Annual Rate (%)</label>
+              <input type="number" id="inp-ci-rate" value="7" step="0.1" oninput="calculateCompoundInterest()" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 font-bold text-xs">
+            </div>
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-slate-600">Years</label>
+              <input type="number" id="inp-ci-years" value="10" oninput="calculateCompoundInterest()" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 font-bold text-xs">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4 p-4 rounded-xl bg-purple-50/70 border border-purple-200 text-slate-900">
+            <div>
+              <span class="text-xs text-slate-600 font-semibold">Total Maturity Value</span>
+              <div id="res-ci-total" class="text-xl font-extrabold text-slate-900 font-mono">$19,671.51</div>
+            </div>
+            <div>
+              <span class="text-xs text-slate-600 font-semibold">Interest Earned</span>
+              <div id="res-ci-interest" class="text-xl font-bold text-purple-700 font-mono">$9,671.51</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="fin-box-roi" class="fin-tool-box hidden space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-slate-600">Initial ($)</label>
+              <input type="number" id="inp-roi-initial" value="5000" oninput="calculateROI()" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 font-bold text-xs">
+            </div>
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-slate-600">Final ($)</label>
+              <input type="number" id="inp-roi-final" value="8500" oninput="calculateROI()" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 font-bold text-xs">
+            </div>
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-slate-600">Years</label>
+              <input type="number" id="inp-roi-years" value="3" oninput="calculateROI()" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 font-bold text-xs">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4 p-4 rounded-xl bg-purple-50/70 border border-purple-200 text-slate-900">
+            <div>
+              <span class="text-xs text-slate-600 font-semibold">Total Return (ROI)</span>
+              <div id="res-roi-pct" class="text-xl font-extrabold text-slate-900 font-mono">+70.0%</div>
+            </div>
+            <div>
+              <span class="text-xs text-slate-600 font-semibold">CAGR</span>
+              <div id="res-roi-cagr" class="text-xl font-bold text-purple-700 font-mono">19.35%</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="fin-box-gst" class="fin-tool-box hidden space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-slate-600">Base Price ($)</label>
+              <input type="number" id="inp-gst-price" value="500" oninput="calculateGST()" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 font-bold text-xs">
+            </div>
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-slate-600">GST / Tax Rate (%)</label>
+              <input type="number" id="inp-gst-rate" value="18" oninput="calculateGST()" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 font-bold text-xs">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4 p-4 rounded-xl bg-purple-50/70 border border-purple-200 text-slate-900">
+            <div>
+              <span class="text-xs text-slate-600 font-semibold">Tax Added</span>
+              <div id="res-gst-tax" class="text-xl font-bold text-purple-700 font-mono">$90.00</div>
+            </div>
+            <div>
+              <span class="text-xs text-slate-600 font-semibold">Gross Total</span>
+              <div id="res-gst-total" class="text-xl font-extrabold text-slate-900 font-mono">$590.00</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="fin-box-tip" class="fin-tool-box hidden space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-slate-600">Bill Amount ($)</label>
+              <input type="number" id="inp-tip-bill" value="120" oninput="calculateTip()" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 font-bold text-xs">
+            </div>
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-slate-600">Tip %</label>
+              <input type="number" id="inp-tip-pct" value="15" oninput="calculateTip()" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 font-bold text-xs">
+            </div>
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-slate-600">Split People</label>
+              <input type="number" id="inp-tip-people" value="3" oninput="calculateTip()" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 font-bold text-xs">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-4 p-4 rounded-xl bg-purple-50/70 border border-purple-200 text-slate-900">
+            <div>
+              <span class="text-xs text-slate-600 font-semibold">Tip Per Person</span>
+              <div id="res-tip-person" class="text-xl font-extrabold text-slate-900 font-mono">$6.00</div>
+            </div>
+            <div>
+              <span class="text-xs text-slate-600 font-semibold">Total Per Person</span>
+              <div id="res-tip-total-person" class="text-xl font-bold text-purple-700 font-mono">$46.00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE VIEW 6: MATH & ENGINEERING WORKSPACE -->
+    <div id="view-math-engineering" class="page-view-container hidden space-y-6 animate-fade-in">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200/60">
+        <div class="flex items-center gap-3">
+          <button onclick="switchView('dashboard')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-purple-50 hover:border-purple-300 text-purple-700 text-xs font-bold transition-all">
+            <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+            <span>Back to Dashboard</span>
+          </button>
+          <h3 class="font-extrabold text-xl text-slate-900">Math &amp; Engineering Workbench</h3>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+          <h4 class="font-bold text-sm text-slate-900">Radix / Base Converter</h4>
+          <div class="space-y-1">
+            <label class="text-xs font-bold text-slate-600">Decimal (Base 10)</label>
+            <input type="number" id="inp-radix-dec" value="255" oninput="convertRadix()" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 font-bold text-xs">
+          </div>
+          <div class="grid grid-cols-3 gap-2 text-center pt-2">
+            <div class="p-2 bg-slate-50 rounded-lg border border-slate-200">
+              <span class="text-[9px] font-bold text-slate-400 block uppercase">HEX (16)</span>
+              <div id="res-radix-hex" class="font-mono font-bold text-purple-700 text-xs">FF</div>
+            </div>
+            <div class="p-2 bg-slate-50 rounded-lg border border-slate-200">
+              <span class="text-[9px] font-bold text-slate-400 block uppercase">BIN (2)</span>
+              <div id="res-radix-bin" class="font-mono font-bold text-slate-900 text-[11px] truncate">11111111</div>
+            </div>
+            <div class="p-2 bg-slate-50 rounded-lg border border-slate-200">
+              <span class="text-[9px] font-bold text-slate-400 block uppercase">OCT (8)</span>
+              <div id="res-radix-oct" class="font-mono font-bold text-blue-700 text-xs">377</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+          <h4 class="font-bold text-sm text-slate-900">Ohm's Law &amp; Circuit Power</h4>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-slate-600">Voltage (V)</label>
+              <input type="number" id="inp-ohms-v" value="12" oninput="calculateOhms()" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 font-bold text-xs">
+            </div>
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-slate-600">Resistance (Ω)</label>
+              <input type="number" id="inp-ohms-r" value="4" oninput="calculateOhms()" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 font-bold text-xs">
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-3 p-3 rounded-xl bg-purple-50/70 border border-purple-200 text-slate-900">
+            <div>
+              <span class="text-[10px] text-slate-600 font-semibold block">Current (I)</span>
+              <div id="res-ohms-i" class="text-sm font-extrabold text-slate-900 font-mono">3.00 Amps</div>
+            </div>
+            <div>
+              <span class="text-[10px] text-slate-600 font-semibold block">Power (P)</span>
+              <div id="res-ohms-p" class="text-sm font-bold text-purple-700 font-mono">36.00 Watts</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE VIEW 7: DATE, TIME & HEALTH WORKSPACE -->
+    <div id="view-date-time-health" class="page-view-container hidden space-y-6 animate-fade-in">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200/60">
+        <div class="flex items-center gap-3">
+          <button onclick="switchView('dashboard')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-purple-50 hover:border-purple-300 text-purple-700 text-xs font-bold transition-all">
+            <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+            <span>Back to Dashboard</span>
+          </button>
+          <h3 class="font-extrabold text-xl text-slate-900">Date, Time &amp; Health Utilities</h3>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+          <h4 class="font-bold text-sm text-slate-900">BMI Diagnostic Gauge</h4>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-slate-600">Weight (kg)</label>
+              <input type="number" id="inp-bmi-weight" value="70" oninput="calculateBMI()" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 font-bold text-xs">
+            </div>
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-slate-600">Height (cm)</label>
+              <input type="number" id="inp-bmi-height" value="175" oninput="calculateBMI()" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 font-bold text-xs">
+            </div>
+          </div>
+          <div class="flex items-center justify-between p-3.5 rounded-xl bg-purple-50/70 border border-purple-200 text-slate-900">
+            <div>
+              <span class="text-[10px] text-slate-600 font-semibold block">BMI Score</span>
+              <div id="res-bmi-score" class="text-xl font-extrabold text-slate-900 font-mono">22.9</div>
+            </div>
+            <span id="res-bmi-status" class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold">Normal Weight</span>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+          <h4 class="font-bold text-sm text-slate-900">Exact Age &amp; Milestone Engine</h4>
+          <div class="space-y-1">
+            <label class="text-xs font-bold text-slate-600">Date of Birth</label>
+            <input type="date" id="inp-age-dob" value="2000-01-01" onchange="calculateAge()" class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 font-bold text-xs">
+          </div>
+          <div class="p-3.5 rounded-xl bg-purple-50/70 border border-purple-200 text-slate-900">
+            <span class="text-[10px] text-slate-600 font-semibold block">Exact Age</span>
+            <div id="res-age-output" class="text-base font-extrabold text-slate-900 font-mono">26 Years, 8 Months, 15 Days</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE VIEW 8: CALCULATION HISTORY WORKSPACE -->
+    <div id="view-calculation-history" class="page-view-container hidden space-y-6 animate-fade-in">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200/60">
+        <div class="flex items-center gap-3">
+          <button onclick="switchView('dashboard')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-purple-50 hover:border-purple-300 text-purple-700 text-xs font-bold transition-all">
+            <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+            <span>Back to Dashboard</span>
+          </button>
+          <h3 class="font-extrabold text-xl text-slate-900">Calculation History Ledger</h3>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="exportHistoryCSV()" class="px-3 py-1.5 rounded-xl bg-purple-100 text-purple-700 text-xs font-bold hover:bg-purple-200">Export CSV</button>
+          <button onclick="clearCalcHistory()" class="px-3 py-1.5 rounded-xl bg-rose-100 text-rose-700 text-xs font-bold hover:bg-rose-200">Clear All</button>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+        <div id="full-history-list" class="space-y-3 max-h-[500px] overflow-y-auto">
+          <!-- Rendered by app.js -->
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE VIEW 9: FAVORITES WORKSPACE -->
+    <div id="view-favorites" class="page-view-container hidden space-y-6 animate-fade-in">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200/60">
+        <div class="flex items-center gap-3">
+          <button onclick="switchView('dashboard')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-purple-50 hover:border-purple-300 text-purple-700 text-xs font-bold transition-all">
+            <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+            <span>Back to Dashboard</span>
+          </button>
+          <h3 class="font-extrabold text-xl text-slate-900">Pinned Shortcuts &amp; Favorites</h3>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div onclick="switchView('calculator')" class="p-5 rounded-2xl bg-white border border-slate-200 hover:border-purple-400 cursor-pointer shadow-xs transition-all space-y-2">
+          <div class="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold">
+            <span class="material-symbols-outlined text-[20px]">calculate</span>
+          </div>
+          <h4 class="font-bold text-base text-slate-900">Standard &amp; Scientific Calculator</h4>
+          <p class="text-xs text-slate-500">Trig, log, exponents &amp; memory functions</p>
+        </div>
+        <div onclick="switchView('currency-converter')" class="p-5 rounded-2xl bg-white border border-slate-200 hover:border-purple-400 cursor-pointer shadow-xs transition-all space-y-2">
+          <div class="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold">
+            <span class="material-symbols-outlined text-[20px]">currency_exchange</span>
+          </div>
+          <h4 class="font-bold text-base text-slate-900">Real-Time Currency Converter</h4>
+          <p class="text-xs text-slate-500">Live forex rates for 40+ currencies</p>
+        </div>
+      </div>
+    </div>
+
+
+
+  </main>
+
+  <!-- SEARCH MODAL -->
+  <div id="search-modal" class="fixed inset-0 bg-slate-900/20 backdrop-blur-md z-50 flex items-start justify-center pt-8 sm:pt-20 px-3 sm:px-0 hidden">
+    <div class="bg-white w-full max-w-lg rounded-2xl border border-slate-200 shadow-2xl overflow-hidden animate-fade-in">
+      <div class="p-3.5 sm:p-4 border-b border-slate-100 flex items-center gap-3">
+        <span class="material-symbols-outlined text-slate-400">search</span>
+        <input type="text" id="search-modal-input" oninput="onSearchModalQuery()" placeholder="Type to search engines (e.g. EMI, Forex, Length)..." class="w-full text-xs sm:text-sm font-semibold focus:outline-none">
+        <button onclick="closeSearchModal()" class="text-slate-400 hover:text-slate-600 text-xs font-bold px-2 py-1 bg-slate-100 rounded">ESC</button>
+      </div>
+      <div id="search-modal-results" class="p-2 max-h-80 overflow-y-auto space-y-1">
+        <!-- Rendered by app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- SHORTCUTS MODAL -->
+  <div id="shortcuts-modal" class="fixed inset-0 bg-slate-900/20 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4 hidden">
+    <div class="bg-white w-full max-w-md rounded-2xl border border-slate-200 shadow-2xl p-4 sm:p-6 space-y-4 animate-fade-in">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <h3 class="font-bold text-sm sm:text-base text-slate-900">Keyboard Shortcuts Guide</h3>
+        <button onclick="closeShortcutsModal()" class="text-slate-400 hover:text-slate-600">✕</button>
+      </div>
+      <div class="space-y-2 text-xs font-semibold text-slate-700">
+        <div class="flex justify-between py-1.5 border-b border-slate-50"><span>Open Global Search</span><kbd class="px-2 py-0.5 bg-slate-100 rounded border">Ctrl K or /</kbd></div>
+        <div class="flex justify-between py-1.5 border-b border-slate-50"><span>Evaluate Calculation</span><kbd class="px-2 py-0.5 bg-slate-100 rounded border">Enter or =</kbd></div>
+        <div class="flex justify-between py-1.5 border-b border-slate-50"><span>Clear Keypad</span><kbd class="px-2 py-0.5 bg-slate-100 rounded border">Escape</kbd></div>
+        <div class="flex justify-between py-1.5 border-b border-slate-50"><span>Backspace Digit</span><kbd class="px-2 py-0.5 bg-slate-100 rounded border">Backspace</kbd></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main JavaScript File -->
+  <script src="app.js"></script>
+</body>
+</html>

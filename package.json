@@ -1,0 +1,19 @@
+{
+  "name": "calx",
+  "version": "1.0.0",
+  "description": "Calx - Universal Modern Calculator & 24/7 Real-Time Currency Converter",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "calculator",
+    "currency-converter",
+    "unit-converter",
+    "financial-calculator",
+    "scientific-calculator",
+    "forex-api"
+  ],
+  "author": "Sachin Jatavat",
+  "license": "MIT"
+}

@@ -1,0 +1,284 @@
+/* ==========================================================================
+   Calx — Universal Modern Calculator & 24/7 Currency Converter
+   Theme: Purple Pastel Modern Dashboard Suite (Mobile Responsive Enhanced)
+   Developer: Sachin Jatavat
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --primary: #7c3aed;
+  --primary-hover: #6d28d9;
+  --primary-light: #f3e8ff;
+  --primary-subtle: #ede9fe;
+  --primary-glow: rgba(124, 58, 237, 0.15);
+  
+  --bg-main: #f8f7fd;
+  --bg-sidebar: #ffffff;
+  --bg-card: #ffffff;
+  --bg-subtle: #f1f0fb;
+  
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-light: #94a3b8;
+  
+  --border-light: #eef0f8;
+  --border-active: #ddd6fe;
+  
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 4px 20px -2px rgba(124, 58, 237, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+  --shadow-card-hover: 0 12px 28px -4px rgba(124, 58, 237, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.04);
+  --shadow-purple: 0 4px 14px 0 rgba(124, 58, 237, 0.3);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: 'Outfit', sans-serif;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Hide scrollbar for clean horizontal tab sliders */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Animations */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeInScale 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Sidebar Active Nav Item */
+.nav-pill-active {
+  background-color: var(--primary) !important;
+  color: #ffffff !important;
+  box-shadow: var(--shadow-purple);
+}
+
+.nav-pill-active span {
+  color: #ffffff !important;
+}
+
+/* Card Hover & Mobile Touch Dynamics */
+.engine-card {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-card);
+}
+
+@media (hover: hover) {
+  .engine-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--border-active);
+    box-shadow: var(--shadow-card-hover);
+  }
+}
+
+/* Touch Friendly Minimum Target Size */
+button, input, select, .calc-btn, .mini-calc-btn {
+  min-height: 38px;
+}
+
+@media (max-width: 640px) {
+  button, input, select {
+    font-size: 14px !important;
+  }
+}
+
+/* Launch Button Pill */
+.btn-launch {
+  background-color: var(--primary-light);
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.75rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 9999px;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.btn-launch:hover, .btn-launch:active {
+  background-color: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+}
+
+/* Quick Keypad Mini Buttons */
+.mini-calc-btn {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.4rem 0;
+  text-align: center;
+  color: var(--text-main);
+  transition: all 0.1s ease;
+  cursor: pointer;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mini-calc-btn:active {
+  transform: scale(0.96);
+  background: var(--primary-light);
+}
+
+.mini-calc-btn-op {
+  background: var(--primary-light);
+  color: var(--primary);
+  border-color: var(--border-active);
+  font-weight: 700;
+}
+
+.mini-calc-btn-op:active {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+/* Full Calculator Button Grid */
+.calc-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 1.15rem;
+  padding: 0.75rem 0.5rem;
+  border-radius: 0.75rem;
+  background-color: #ffffff;
+  color: #0f172a;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  transition: all 0.12s ease-in-out;
+  cursor: pointer;
+  user-select: none;
+  min-height: 46px;
+}
+
+.calc-btn:active {
+  transform: scale(0.96);
+  background-color: #f1f5f9;
+}
+
+.calc-btn-op {
+  background-color: #f5f3ff;
+  color: #6d28d9;
+  border-color: #ddd6fe;
+  font-weight: 700;
+}
+
+.calc-btn-action {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
+  font-weight: 700;
+}
+
+.calc-btn-equals {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  color: #ffffff;
+  border: none;
+  font-weight: 700;
+  box-shadow: 0 4px 14px 0 rgba(109, 40, 217, 0.35);
+}
+
+.calc-btn-sci {
+  background-color: #f8fafc;
+  color: #475569;
+  font-size: 0.85rem;
+  font-weight: 600;
+  min-height: 38px;
+  padding: 0.4rem 0.2rem;
+}
+
+/* Backdrop Blur Modals & Mobile Drawer */
+.modal-backdrop {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Mobile Sidebar Drawer Smooth Slide */
+@media (max-width: 767px) {
+  #sidebar-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 80%;
+    max-width: 300px;
+    z-index: 50;
+    transform: translateX(-100%);
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  #sidebar-container.mobile-open {
+    transform: translateX(0);
+  }
+
+  #mobile-drawer-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 40;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  #mobile-drawer-overlay.mobile-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
